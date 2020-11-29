@@ -46,11 +46,11 @@ export default {
       storageBucket: 'workitout-7ac8f.appspot.com',
       messagingSenderId: '571698421782',
       appId: '1:571698421782:web:8a5b26a1150e5dbf459537',
-      measurementId: 'G-JM7BL5WVB3'
+      measurementId: 'G-JM7BL5WVB3',
     },
     services: {
-      auth: true
-    }
+      auth: true,
+    },
   },
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
