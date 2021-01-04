@@ -1,31 +1,36 @@
 <template>
   <div class="container" :class="{ 'right-panel-active': rightPanel }">
     <div class="form-container sign-up-container">
-      <form action="#">
+      <form action="#" @submit="createUser">
         <h1>Create Account</h1>
         <div class="social-container">
-          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social">
+            <font-awesome-icon :icon="['fab', 'facebook']" />
+          </a>
+          <a href="#" class="social" @click="singInGoogle">
+            <font-awesome-icon :icon="['fab', 'google']" />
+          </a>
         </div>
         <span>or use your email for registration</span>
-        <input type="text" placeholder="Name" />
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
+        <input v-model="userEmail" type="email" placeholder="Email" />
+        <input v-model="userPassword" type="password" placeholder="Password" />
         <button>Sign Up</button>
       </form>
     </div>
     <div class="form-container sign-in-container">
-      <form action="#">
+      <form action="#" @submit="singInUser">
         <h1>Sign in</h1>
         <div class="social-container">
-          <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
-          <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="social">
+            <font-awesome-icon :icon="['fab', 'facebook']" />
+          </a>
+          <a href="#" class="social" @click="singInGoogle">
+            <font-awesome-icon :icon="['fab', 'google']" />
+          </a>
         </div>
         <span>or use your account</span>
-        <input type="email" placeholder="Email" />
-        <input type="password" placeholder="Password" />
+        <input v-model="userEmail" type="email" placeholder="Email" />
+        <input v-model="userPassword" type="password" placeholder="Password" />
         <a href="#">Forgot your password?</a>
         <button>Sign In</button>
       </form>
@@ -34,12 +39,18 @@
       <div class="overlay">
         <div class="overlay-panel overlay-left">
           <h1>Welcome Back!</h1>
-          <p>To keep connected with us please login with your personal info</p>
+          <p>
+            Let's get back together to continue your progress towards a better
+            lifestyle.
+          </p>
           <button class="ghost" @click="changePanel">Sign In</button>
         </div>
         <div class="overlay-panel overlay-right">
-          <h1>Hello, Friend!</h1>
-          <p>Enter your personal details and start journey with us</p>
+          <h1>Hello newcomer!</h1>
+          <p>
+            Enter your personal details to start your journey to a healthier
+            lifestyle.
+          </p>
           <button class="ghost" @click="changePanel">Sign Up</button>
         </div>
       </div>
@@ -52,11 +63,44 @@ export default {
   data() {
     return {
       rightPanel: false,
+      userEmail: '',
+      userPassword: '',
     }
   },
   methods: {
     changePanel() {
       this.rightPanel = !this.rightPanel
+    },
+    async createUser() {
+      try {
+        await this.$fire.auth.createUserWithEmailAndPassword(
+          this.userEmail,
+          this.userPassword
+        )
+      } catch (e) {
+        alert(e)
+      }
+    },
+    async singInUser() {
+      try {
+        await this.$fire.auth.signInWithEmailAndPassword(
+          this.userEmail,
+          this.userPassword
+        )
+      } catch (e) {
+        alert(e)
+      }
+    },
+    async singInGoogle() {
+      try {
+        const provider = new this.$fireModule.auth.GoogleAuthProvider()
+        await this.$fire.auth.signInWithPopup(provider).then(function (result) {
+          // const token = result.credential.accessToken
+          // const user = result.user
+        })
+      } catch (e) {
+        alert(e)
+      }
     },
   },
 }

@@ -26,6 +26,7 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
+    '@nuxtjs/fontawesome',
   ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
@@ -36,6 +37,12 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/firebase',
   ],
+
+  fontawesome: {
+    icons: {
+      brands: ['faFacebook', 'faGoogle'],
+    },
+  },
 
   firebase: {
     config: {
@@ -49,7 +56,14 @@ export default {
       measurementId: 'G-JM7BL5WVB3',
     },
     services: {
-      auth: true,
+      auth: {
+        persistence: 'local', // default
+        initialize: {
+          onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
+          onAuthStateChangedAction: 'onAuthStateChangedAction',
+          subscribeManually: false,
+        },
+      },
     },
   },
 
