@@ -56,14 +56,7 @@ export default {
       measurementId: 'G-JM7BL5WVB3',
     },
     services: {
-      auth: {
-        persistence: 'local', // default
-        initialize: {
-          onAuthStateChangedMutation: 'ON_AUTH_STATE_CHANGED_MUTATION',
-          onAuthStateChangedAction: 'onAuthStateChangedAction',
-          subscribeManually: false,
-        },
-      },
+      auth: true,
     },
   },
 

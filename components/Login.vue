@@ -1,13 +1,13 @@
 <template>
   <div class="container" :class="{ 'right-panel-active': rightPanel }">
     <div class="form-container sign-up-container">
-      <form action="#" @submit="createUser">
+      <form @submit.prevent="createUser">
         <h1>Create Account</h1>
         <div class="social-container">
-          <a href="#" class="social">
+          <a href="#" class="social" @click="singInProvider('facebook')">
             <font-awesome-icon :icon="['fab', 'facebook']" />
           </a>
-          <a href="#" class="social" @click="singInGoogle">
+          <a href="#" class="social" @click="singInProvider('google')">
             <font-awesome-icon :icon="['fab', 'google']" />
           </a>
         </div>
@@ -18,13 +18,13 @@
       </form>
     </div>
     <div class="form-container sign-in-container">
-      <form action="#" @submit="singInUser">
+      <form @submit.prevent="singInUser">
         <h1>Sign in</h1>
         <div class="social-container">
-          <a href="#" class="social">
+          <a href="#" class="social" @click="singInProvider('facebook')">
             <font-awesome-icon :icon="['fab', 'facebook']" />
           </a>
-          <a href="#" class="social" @click="singInGoogle">
+          <a href="#" class="social" @click="singInProvider('google')">
             <font-awesome-icon :icon="['fab', 'google']" />
           </a>
         </div>
@@ -65,42 +65,50 @@ export default {
       rightPanel: false,
       userEmail: '',
       userPassword: '',
+      error: '',
     }
   },
   methods: {
     changePanel() {
       this.rightPanel = !this.rightPanel
     },
-    async createUser() {
-      try {
-        await this.$fire.auth.createUserWithEmailAndPassword(
-          this.userEmail,
-          this.userPassword
-        )
-      } catch (e) {
-        alert(e)
-      }
-    },
-    async singInUser() {
-      try {
-        await this.$fire.auth.signInWithEmailAndPassword(
-          this.userEmail,
-          this.userPassword
-        )
-      } catch (e) {
-        alert(e)
-      }
-    },
-    async singInGoogle() {
-      try {
-        const provider = new this.$fireModule.auth.GoogleAuthProvider()
-        await this.$fire.auth.signInWithPopup(provider).then(function (result) {
-          // const token = result.credential.accessToken
-          // const user = result.user
+    createUser() {
+      this.$fire.auth
+        .createUserWithEmailAndPassword(this.userEmail, this.userPassword)
+        .then(async (user) => {
+          await this.$store.dispatch('onAuthStateChanged', user)
+          this.$router.push('/home')
         })
-      } catch (e) {
-        alert(e)
-      }
+        .catch((error) => {
+          this.error = error
+        })
+    },
+    singInUser() {
+      this.$fire.auth
+        .signInWithEmailAndPassword(this.userEmail, this.userPassword)
+        .then(async (user) => {
+          await this.$store.dispatch('onAuthStateChanged', user)
+          this.$router.push('/home')
+        })
+        .catch((error) => {
+          this.error = error
+        })
+    },
+    singInProvider(prov) {
+      const provider =
+        prov === 'google'
+          ? new this.$fireModule.auth.GoogleAuthProvider()
+          : new this.$fireModule.auth.FacebookAuthProvider()
+
+      this.$fire.auth
+        .signInWithPopup(provider)
+        .then(async (user) => {
+          await this.$store.dispatch('onAuthStateChanged', user)
+          this.$router.push('/home')
+        })
+        .catch((error) => {
+          this.error = error
+        })
     },
   },
 }
