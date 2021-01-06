@@ -1,10 +1,13 @@
 <template>
   <div class="header">
     <nuxt-link to="/" tag="div" class="logo">
-      <h1>Work It Out!</h1>
+      <!--<h1>Work It Out!</h1>-->
+      <img src="../assets/logo_transparent.png" alt="Work It Out! Logo" />
     </nuxt-link>
     <div class="buttons">
+      <nuxt-link to="aboutus" tag="div">About Us</nuxt-link>
       <div v-if="loggedIn" @click="logout">Log Out</div>
+      <nuxt-link v-else to="login" tag="div">Log In</nuxt-link>
     </div>
   </div>
 </template>
@@ -19,7 +22,7 @@ export default {
   methods: {
     logout() {
       this.$fire.auth.signOut().then(async (user) => {
-        await this.$store.dispatch('onAuthStateChanged', user)
+        await this.$store.dispatch('logOut')
         this.$router.push('/login')
       })
     },
@@ -30,7 +33,7 @@ export default {
 <style scoped>
 div {
   font-family: 'Staatliches', cursive;
-  background-color: #f0f3f4;
+  background-color: #000000;
   width: 100%;
   height: 60px;
   display: flex;
@@ -38,16 +41,21 @@ div {
   align-items: center;
 }
 .logo {
-  width: 70%;
-  margin-left: 3%;
+  width: 75%;
   display: flex;
   justify-content: flex-start;
 }
-h1 {
+img {
   cursor: pointer;
+  width: 35%;
 }
 
 .buttons {
-  width: 30%;
+  width: 25%;
+  color: #ffffff;
+}
+
+.buttons div {
+  cursor: pointer;
 }
 </style>

@@ -76,8 +76,8 @@ export default {
       this.$fire.auth
         .createUserWithEmailAndPassword(this.userEmail, this.userPassword)
         .then(async (user) => {
-          await this.$store.dispatch('onAuthStateChanged', user)
-          this.$router.push('/home')
+          await this.$store.dispatch('logUser', user)
+          this.$router.push('/')
         })
         .catch((error) => {
           this.error = error
@@ -87,10 +87,11 @@ export default {
       this.$fire.auth
         .signInWithEmailAndPassword(this.userEmail, this.userPassword)
         .then(async (user) => {
-          await this.$store.dispatch('onAuthStateChanged', user)
-          this.$router.push('/home')
+          await this.$store.dispatch('logUser', user)
+          this.$router.push('/')
         })
         .catch((error) => {
+          console.log(error)
           this.error = error
         })
     },
@@ -103,8 +104,8 @@ export default {
       this.$fire.auth
         .signInWithPopup(provider)
         .then(async (user) => {
-          await this.$store.dispatch('onAuthStateChanged', user)
-          this.$router.push('/home')
+          await this.$store.dispatch('logUser', user)
+          this.$router.push('/')
         })
         .catch((error) => {
           this.error = error
@@ -161,6 +162,7 @@ button {
   letter-spacing: 1px;
   text-transform: uppercase;
   transition: transform 80ms ease-in;
+  cursor: pointer;
 }
 
 button:active {
