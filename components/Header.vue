@@ -35,7 +35,8 @@ div {
   font-family: 'Staatliches', cursive;
   background-color: #000000;
   width: 100%;
-  height: 60px;
+  max-height: 60px;
+  min-height: 60px;
   display: flex;
   justify-content: space-around;
   align-items: center;

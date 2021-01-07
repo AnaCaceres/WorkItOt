@@ -41,6 +41,7 @@ export default {
   fontawesome: {
     icons: {
       brands: ['faFacebook', 'faGoogle'],
+      solid: ['faUserCog', 'faArrowCircleRight', 'faArrowCircleLeft'],
     },
   },
 

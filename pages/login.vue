@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  layout: 'default',
+  layout: 'login',
 }
 </script>
 
