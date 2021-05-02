@@ -10,14 +10,29 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.png' }],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.png' },
+      {
+        rel: 'stylesheet',
+        type: 'text/css',
+        href:
+          'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css',
+      },
+    ],
+    script: [
+      {
+        src:
+          'https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js',
+        body: true,
+      },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
-  css: [],
+  css: ['@/assets/styles/main.scss'],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [],
+  plugins: [{ src: '~plugins/v-calendar.js', ssr: false }],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
@@ -41,7 +56,18 @@ export default {
   fontawesome: {
     icons: {
       brands: ['faFacebook', 'faGoogle'],
-      solid: ['faUserCog', 'faArrowCircleRight', 'faArrowCircleLeft'],
+      solid: [
+        'faUserCog',
+        'faArrowCircleRight',
+        'faArrowCircleLeft',
+        'faShoppingBasket',
+        'faTasks',
+        'faUtensils',
+        'faDumbbell',
+        'faWeight',
+        'faPlusCircle',
+        'faBuilding',
+      ],
     },
   },
 
@@ -69,4 +95,9 @@ export default {
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},
+
+  server: {
+    port: 8000, // default: 3000
+    host: '0.0.0.0', // default: localhost
+  },
 }
