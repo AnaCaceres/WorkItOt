@@ -1,6 +1,6 @@
 <template>
   <div class="menu">
-    <calendar class="menu-calendar" />
+    <calendar class="menu-calendar" type="menu" />
   </div>
 </template>
 

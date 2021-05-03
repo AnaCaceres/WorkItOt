@@ -132,6 +132,11 @@
                 class="form-control"
                 placeholder="Password"
               />
+              <div id="passwordHelpBlock" class="form-text">
+                Your password must be at least 6 characters long, contain
+                letters and numbers, and must not contain spaces, special
+                characters, or emoji.
+              </div>
             </div>
             <button type="submit" class="btn btn-dark">Sign In</button>
           </div>
@@ -194,6 +199,15 @@ export default {
         .signInWithPopup(provider)
         .then(async (user) => {
           await this.$store.dispatch('logUser', user)
+          if (prov === 'google' && user.additionalUserInfo.isNewUser) {
+            this.$fire.firestore.collection('profile').add({
+              userID: user.user.uid,
+              name: user.additionalUserInfo.profile.name,
+              picture: user.additionalUserInfo.profile.picture,
+            })
+          } else if (prov === 'facebook') {
+            // console.log(user)
+          }
           this.$router.push('/trainings')
         })
         .catch((error) => {

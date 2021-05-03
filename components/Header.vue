@@ -24,7 +24,7 @@
             <nuxt-link class="nav-link" to="login">Log In</nuxt-link>
           </li>
         </ul>
-        <Navbar class="nav d-lg-none mt-2 rounded" />
+        <Navbar v-else class="nav d-lg-none mt-2 rounded" />
       </div>
     </div>
   </nav>

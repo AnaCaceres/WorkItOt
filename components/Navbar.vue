@@ -67,18 +67,28 @@
       <a
         id="dropdownUser2"
         href="#"
-        class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle"
+        class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle nav-link"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
+        <font-awesome-icon
+          v-if="!this.$fire.auth.currentUser.photoURL"
+          :icon="['fas', 'user-ninja']"
+          class="me-2"
+        />
         <img
-          src="https://github.com/mdo.png"
+          v-else
+          :src="this.$fire.auth.currentUser.photoURL"
           alt="mdo"
           width="32"
           height="32"
           class="rounded-circle me-2"
         />
-        <strong>mdo</strong>
+        <strong>{{
+          this.$fire.auth.currentUser.displayName
+            ? this.$fire.auth.currentUser.displayName
+            : 'User'
+        }}</strong>
       </a>
       <ul
         class="dropdown-menu text-small shadow"

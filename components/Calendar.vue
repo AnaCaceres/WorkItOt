@@ -9,7 +9,8 @@
         <div
           class="day-container flex flex-col h-full z-10 overflow-hidden"
           data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
+          data-bs-target="#infoModal"
+          @click="setEvent(day.date)"
         >
           <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
           <div class="flex-grow overflow-y-auto overflow-x-auto">
@@ -26,7 +27,7 @@
       </template>
     </v-calendar>
     <div
-      id="exampleModal"
+      id="infoModal"
       class="modal modal-fullscreen-sm-down fade"
       tabindex="-1"
       role="dialog"
@@ -36,7 +37,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 id="exampleModalLabel" class="modal-title">Modal title</h5>
+            <h5 id="exampleModalLabel" class="modal-title">{{ title }}</h5>
             <button
               type="button"
               class="btn-close"
@@ -48,12 +49,75 @@
           <div class="modal-footer">
             <button
               type="button"
-              class="btn btn-secondary"
+              class="btn btn-info text-white"
+              data-bs-target="#formModal"
+              data-bs-toggle="modal"
               data-bs-dismiss="modal"
             >
-              Close
+              {{ `Add ${type}` }}
             </button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      id="formModal"
+      class="modal modal-fullscreen-sm-down fade"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 id="exampleModalLabel" class="modal-title">
+              {{ `Add ${type}` }}
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              data-bs-target="#infoModal"
+              data-bs-toggle="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="exerciseName" class="form-label">Name</label>
+              <input
+                id="exerciseName"
+                type="text"
+                class="form-control"
+                aria-describedby="exerciseName"
+                v-model="exerciseName"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="exerciseDescription" class="form-label">
+                Description
+              </label>
+              <textarea
+                id="exerciseDescription"
+                class="form-control"
+                placeholder="Specify excersice here"
+                style="height: 100px"
+                v-model="exerciseDescription"
+              ></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-info text-white"
+              data-bs-target="#infoModal"
+              data-bs-toggle="modal"
+              data-bs-dismiss="modal"
+              @click="addExercise"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>
@@ -64,12 +128,42 @@
 <script>
 export default {
   middleware: 'authenticated',
+  props: {
+    attributes: {
+      type: Array,
+      default: () => [],
+    },
+    type: {
+      type: String,
+      default: 'training',
+    },
+  },
   data: () => ({
     masks: {
       weekdays: 'W',
     },
-    attributes: [],
+    date: new Date(),
+    exerciseName: '',
+    exerciseDescription: '',
   }),
+  computed: {
+    title() {
+      return this.type === 'training' ? 'Training overview' : 'Menu overview'
+    },
+  },
+  methods: {
+    setEvent(date) {
+      this.date = date
+    },
+    addExercise() {
+      this.$fire.firestore.collection('trainings').add({
+        userID: this.$fire.auth.currentUser.uid,
+        date: this.date,
+        name: this.exerciseName,
+        description: this.exerciseDescription,
+      })
+    },
+  },
 }
 </script>
 
@@ -145,5 +239,8 @@ export default {
   & .vc-day-dots {
     margin-bottom: 5px;
   }
+}
+.btn-info {
+  background-color: #17a2b8 !important;
 }
 </style>
