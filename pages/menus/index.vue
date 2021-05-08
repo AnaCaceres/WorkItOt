@@ -1,6 +1,11 @@
 <template>
   <div class="menu">
-    <calendar class="menu-calendar" type="menu" />
+    <calendar
+      class="menu-calendar"
+      type="menu"
+      :attributes="attributes"
+      @update="update"
+    />
   </div>
 </template>
 
@@ -9,6 +14,33 @@ import Calendar from '@/components/Calendar.vue'
 export default {
   components: { Calendar },
   middleware: 'authenticated',
+  data: () => ({
+    attributes: [],
+  }),
+  mounted() {
+    this.update()
+  },
+  methods: {
+    update() {
+      this.attributes = []
+      this.$fire.firestore
+        .collection('menus')
+        .where('userID', '==', this.$fire.auth.currentUser.uid)
+        .get()
+        .then((results) => {
+          results.forEach((doc) => {
+            this.attributes.push({
+              customData: {
+                title: doc.data().name,
+                description: doc.data().description,
+                video: doc.data().video,
+              },
+              dates: new Date(doc.data().date.seconds * 1000),
+            })
+          })
+        })
+    },
+  },
 }
 </script>
 

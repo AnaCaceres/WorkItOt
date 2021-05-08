@@ -10,15 +10,14 @@
           class="day-container flex flex-col h-full z-10 overflow-hidden"
           data-bs-toggle="modal"
           data-bs-target="#infoModal"
-          @click="setEvent(day.date)"
+          @click="setEventDate(day.date)"
         >
           <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
-          <div class="flex-grow overflow-y-auto overflow-x-auto">
+          <div class="flex-grow overflow-y-auto overflow-x-auto day-content">
             <p
-              v-for="attr in attributes"
-              :key="attr.key"
+              v-for="(attr, i) in attributes"
+              :key="i"
               class="text-xs leading-tight rounded-sm p-1 mt-0 mb-1"
-              :class="attr.customData.class"
             >
               {{ attr.customData.title }}
             </p>
@@ -45,7 +44,9 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">...</div>
+          <div class="modal-body">
+            <p>{{ currentEvents }}</p>
+          </div>
           <div class="modal-footer">
             <button
               type="button"
@@ -85,25 +86,35 @@
           </div>
           <div class="modal-body">
             <div class="mb-3">
-              <label for="exerciseName" class="form-label">Name</label>
+              <label for="eventName" class="form-label">Name</label>
               <input
-                id="exerciseName"
+                id="eventName"
+                v-model="eventName"
                 type="text"
                 class="form-control"
-                aria-describedby="exerciseName"
-                v-model="exerciseName"
+                aria-describedby="eventName"
               />
             </div>
             <div class="mb-3">
-              <label for="exerciseDescription" class="form-label">
+              <label for="eventVideo" class="form-label">Video URL</label>
+              <input
+                id="eventVideo"
+                v-model="eventVideo"
+                type="text"
+                class="form-control"
+                aria-describedby="eventVideo"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="eventDescription" class="form-label">
                 Description
               </label>
               <textarea
-                id="exerciseDescription"
+                id="eventDescription"
+                v-model="eventDescription"
                 class="form-control"
                 placeholder="Specify excersice here"
                 style="height: 100px"
-                v-model="exerciseDescription"
               ></textarea>
             </div>
           </div>
@@ -114,7 +125,7 @@
               data-bs-target="#infoModal"
               data-bs-toggle="modal"
               data-bs-dismiss="modal"
-              @click="addExercise"
+              @click="addEvent"
             >
               Save
             </button>
@@ -143,25 +154,41 @@ export default {
       weekdays: 'W',
     },
     date: new Date(),
-    exerciseName: '',
-    exerciseDescription: '',
+    eventName: '',
+    eventDescription: '',
+    eventVideo: '',
   }),
   computed: {
     title() {
       return this.type === 'training' ? 'Training overview' : 'Menu overview'
     },
+    currentEvents() {
+      const currentEvents = []
+      this.attributes.forEach((attr) => {
+        if (attr.dates.getTime() === this.date.getTime()) {
+          currentEvents.push(attr)
+        }
+      })
+      return currentEvents
+    },
   },
   methods: {
-    setEvent(date) {
+    setEventDate(date) {
       this.date = date
     },
-    addExercise() {
-      this.$fire.firestore.collection('trainings').add({
+    addEvent() {
+      const collection = this.type === 'training' ? 'trainings' : 'menus'
+      this.$fire.firestore.collection(collection).add({
         userID: this.$fire.auth.currentUser.uid,
         date: this.date,
-        name: this.exerciseName,
-        description: this.exerciseDescription,
+        name: this.eventName,
+        description: this.eventDescription,
+        video: this.eventVideo,
       })
+      this.eventName = ''
+      this.eventDescription = ''
+      this.eventVideo = ''
+      this.$emit('update')
     },
   },
 }
@@ -180,6 +207,15 @@ export default {
     z-index: 3;
     bottom: 0;
     right: 0;
+  }
+}
+.day-content {
+  height: calc(50vh / 6);
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 }
 .custom-calendar.vc-container {

@@ -194,19 +194,21 @@ export default {
         prov === 'google'
           ? new this.$fireModule.auth.GoogleAuthProvider()
           : new this.$fireModule.auth.FacebookAuthProvider()
-
       this.$fire.auth
         .signInWithPopup(provider)
-        .then(async (user) => {
-          await this.$store.dispatch('logUser', user)
+        .then((user) => {
           if (prov === 'google' && user.additionalUserInfo.isNewUser) {
             this.$fire.firestore.collection('profile').add({
               userID: user.user.uid,
               name: user.additionalUserInfo.profile.name,
               picture: user.additionalUserInfo.profile.picture,
             })
-          } else if (prov === 'facebook') {
-            // console.log(user)
+          } else if (prov === 'facebook' && user.additionalUserInfo.isNewUser) {
+            this.$fire.firestore.collection('profile').add({
+              userID: user.user.uid,
+              name: user.additionalUserInfo.profile.name,
+              picture: user.additionalUserInfo.profile.picture.url,
+            })
           }
           this.$router.push('/trainings')
         })
