@@ -136,7 +136,7 @@
     <div>
       <h4>Today's habits</h4>
       <ul class="list-group">
-        <li v-for="(habit, i) in habits" :key="i" class="list-group-item">
+        <li v-for="(habit, i) in todaysHabits" :key="i" class="list-group-item">
           <input
             :id="habit.name + i"
             v-model="accomplishedToday"
