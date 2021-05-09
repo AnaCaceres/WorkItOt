@@ -1,6 +1,6 @@
 <template>
   <div class="groceries">
-    <h2>Goceries List</h2>
+    <h2>Groceries List</h2>
     <ul class="list">
       <li class="d-none d-md-flex input-group mb-3">
         <input
@@ -22,9 +22,9 @@
           aria-describedby="button-addon"
         />
         <button
+          id="button-addon"
           class="btn btn-outline-info"
           type="button"
-          id="button-addon"
           @click="addItem"
         >
           Add
@@ -50,20 +50,31 @@
           aria-describedby="button-addon"
         />
         <button
+          id="button-addon"
           class="btn btn-outline-info"
           type="button"
-          id="button-addon"
           @click="addItem"
         >
           Add
         </button>
       </li>
-      <li v-for="(item, i) in list" :key="i">
+      <li class="d-flex justify-content-end">
+        <button
+          id="button-addon"
+          class="btn btn-info text-white"
+          type="button"
+          @click="deleteItems"
+        >
+          <font-awesome-icon :icon="['fas', 'trash-alt']" class="trash me-2" />
+          Delete checked items
+        </button>
+      </li>
+      <li v-for="(item, i) in list" :key="i" class="items">
         <input
-          class="form-check-input"
+          :id="'flexCheckDefault' + i"
+          class="form-check-input me-2"
           type="checkbox"
           value=""
-          :id="'flexCheckDefault' + i"
           :checked="item.bought"
           @click="updateItem(item)"
         />
@@ -74,11 +85,6 @@
         >
           {{ item.item }} - {{ item.quantity }}
         </label>
-        <font-awesome-icon
-          :icon="['fas', 'trash-alt']"
-          class="trash mx-2"
-          @click="deleteItem(item)"
-        />
       </li>
     </ul>
   </div>
@@ -97,34 +103,39 @@ export default {
   },
   methods: {
     addItem() {
-      this.$fire.firestore.collection('groceries').add({
+      const newItem = {
         userID: this.$fire.auth.currentUser.uid,
         item: this.newItem,
         quantity: this.newItemQuantity,
         bought: false,
-      })
+      }
+      this.$fire.firestore.collection('groceries').add(newItem)
       this.newItemQuantity = ''
       this.newItem = ''
-      this.update()
+      this.list.unshift(newItem)
     },
-    deleteItem(item) {
+    deleteItems() {
+      const currentList = [...this.list]
+      currentList.forEach((item) => {
+        if (item.bought === true) this.list.splice(this.list.indexOf(item), 1)
+      })
       this.$fire.firestore
         .collection('groceries')
-        .where('userID', '==', item.userID)
-        .where('item', '==', item.item)
-        .where('quantity', '==', item.quantity)
+        .where('userID', '==', this.$fire.auth.currentUser.uid)
+        .where('bought', '==', true)
         .get()
         .then((results) => {
           results.forEach((doc) => {
-            this.$fire.firestore
-              .collection('groceries')
-              .doc(doc.id)
-              .delete()
-              .then(this.update())
+            this.$fire.firestore.collection('groceries').doc(doc.id).delete()
           })
         })
     },
     updateItem(item) {
+      let isBought = null
+      this.list[this.list.indexOf(item)].bought === true
+        ? (isBought = false)
+        : (isBought = true)
+      this.list[this.list.indexOf(item)].bought = isBought
       this.$fire.firestore
         .collection('groceries')
         .where('userID', '==', item.userID)
@@ -133,16 +144,12 @@ export default {
         .get()
         .then((results) => {
           results.forEach((doc) => {
-            this.$fire.firestore
-              .collection('groceries')
-              .doc(doc.id)
-              .set(
-                {
-                  bought: !doc.data().bought,
-                },
-                { merge: true }
-              )
-              .then(this.update())
+            this.$fire.firestore.collection('groceries').doc(doc.id).set(
+              {
+                bought: !doc.data().bought,
+              },
+              { merge: true }
+            )
           })
         })
     },
@@ -154,7 +161,7 @@ export default {
         .get()
         .then((results) => {
           results.forEach((doc) => {
-            this.list.push(doc.data())
+            this.list.unshift(doc.data())
           })
         })
     },
@@ -176,6 +183,12 @@ export default {
     li {
       padding: 4px 0;
       list-style-type: none;
+      &.items {
+        display: flex;
+      }
+      .btn-info {
+        background-color: #17a2b8 !important;
+      }
       .btn-outline-info {
         border-color: #17a2b8 !important;
         color: #17a2b8 !important;
@@ -185,11 +198,18 @@ export default {
         }
       }
       .trash {
-        cursor: pointer;
-        color: #17a2b8 !important;
+        color: white;
       }
       .line-through {
         text-decoration: line-through;
+      }
+      .form-check-input {
+        flex-shrink: 0;
+      }
+      .form-check-label {
+        width: 90%;
+        display: inline;
+        word-wrap: break-word;
       }
     }
   }

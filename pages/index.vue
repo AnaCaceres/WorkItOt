@@ -1,14 +1,13 @@
 <template>
-  <div class="home">
-    <calendar class="training-calendar" />
-  </div>
+  <div class="home"></div>
 </template>
 
 <script>
-import Calendar from '@/components/Calendar.vue'
 export default {
-  components: { Calendar },
   middleware: 'authenticated',
+  created() {
+    this.$router.push('/trainings')
+  },
 }
 </script>
 

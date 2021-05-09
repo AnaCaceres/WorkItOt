@@ -107,6 +107,9 @@ export default {
   data: () => ({
     active: 'trainings',
   }),
+  created() {
+    this.active = this.$route.path.substring(1)
+  },
   methods: {
     logout() {
       this.$fire.auth.signOut().then(async (user) => {
