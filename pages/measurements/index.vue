@@ -162,24 +162,31 @@
               <th scope="col">Left Calf</th>
               <th scope="col">Waist</th>
               <th scope="col">Hips</th>
+              <th scope="col"></th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(measurement, i) in measurements" :key="i">
               <th scope="row">
-                {{ measurement.date.getDate() }}/{{
-                  measurement.date.getMonth() + 1
-                }}/{{ measurement.date.getFullYear() }}
+                {{ measurement.transformedDate.getDate() }}/{{
+                  measurement.transformedDate.getMonth() + 1
+                }}/{{ measurement.transformedDate.getFullYear() }}
               </th>
-              <td>{{ measurement.weight }}</td>
-              <td>{{ measurement.rightArm }}</td>
-              <td>{{ measurement.leftArm }}</td>
-              <td>{{ measurement.rightThigh }}</td>
-              <td>{{ measurement.leftThigh }}</td>
-              <td>{{ measurement.rightCalf }}</td>
-              <td>{{ measurement.leftCalf }}</td>
-              <td>{{ measurement.waist }}</td>
-              <td>{{ measurement.hips }}</td>
+              <td>{{ measurement.weight }}kg</td>
+              <td>{{ measurement.rightArm }}cm</td>
+              <td>{{ measurement.leftArm }}cm</td>
+              <td>{{ measurement.rightThigh }}cm</td>
+              <td>{{ measurement.leftThigh }}cm</td>
+              <td>{{ measurement.rightCalf }}cm</td>
+              <td>{{ measurement.leftCalf }}cm</td>
+              <td>{{ measurement.waist }}cm</td>
+              <td>{{ measurement.hips }}cm</td>
+              <td @click="deleteMeasurement(measurement)">
+                <font-awesome-icon
+                  :icon="['fas', 'trash-alt']"
+                  class="trash me-2"
+                />
+              </td>
             </tr>
           </tbody>
         </table>
@@ -234,6 +241,29 @@ export default {
       this.hips = null
       this.update()
     },
+    deleteMeasurement(measurement) {
+      const index = this.measurements.indexOf(measurement)
+      this.measurements.splice(index, 1)
+      this.$fire.firestore
+        .collection('measurements')
+        .where('userID', '==', measurement.userID)
+        .where('date', '==', measurement.date)
+        .where('weight', '==', measurement.weight)
+        .where('rightArm', '==', measurement.rightArm)
+        .where('leftArm', '==', measurement.leftArm)
+        .where('rightThigh', '==', measurement.rightThigh)
+        .where('leftThigh', '==', measurement.leftThigh)
+        .where('rightCalf', '==', measurement.rightCalf)
+        .where('leftCalf', '==', measurement.leftCalf)
+        .where('waist', '==', measurement.waist)
+        .where('hips', '==', measurement.hips)
+        .get()
+        .then((results) => {
+          results.forEach((doc) => {
+            this.$fire.firestore.collection('measurements').doc(doc.id).delete()
+          })
+        })
+    },
     update() {
       this.measurements = []
       this.$fire.firestore
@@ -244,7 +274,7 @@ export default {
           results.forEach((doc) => {
             this.measurements.push({
               ...doc.data(),
-              date: new Date(doc.data().date.seconds * 1000),
+              transformedDate: new Date(doc.data().date.seconds * 1000),
             })
           })
         })

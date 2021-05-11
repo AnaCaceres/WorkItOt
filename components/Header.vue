@@ -34,7 +34,7 @@
 export default {
   computed: {
     loggedIn() {
-      return this.$store.state.authenticated
+      return this.$fire.auth.currentUser
     },
   },
 }

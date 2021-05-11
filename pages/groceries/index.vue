@@ -69,6 +69,9 @@
           Delete checked items
         </button>
       </li>
+      <li>
+        <h4 class="text-decoration-underline">List</h4>
+      </li>
       <li v-for="(item, i) in list" :key="i" class="items">
         <input
           :id="'flexCheckDefault' + i"
