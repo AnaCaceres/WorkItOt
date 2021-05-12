@@ -12,12 +12,21 @@
           data-bs-target="#infoModal"
           @click="setEventDate(day.date)"
         >
-          <span class="day-label text-sm text-gray-900">{{ day.day }}</span>
+          <span
+            class="day-label text-sm text-gray-900"
+            :class="{
+              'text-info fw-bold':
+                day.day === today.getDate() &&
+                day.year === today.getFullYear() &&
+                day.month === today.getMonth() + 1,
+            }"
+            >{{ day.day }}</span
+          >
           <div class="flex-grow overflow-y-auto overflow-x-auto day-content">
             <p
               v-for="(attr, i) in attributes"
               :key="i"
-              class="text-xs leading-tight rounded-sm p-1 mt-0 mb-1"
+              class="day-data bg-secondary text-white text-center fs-6 rounded p-1 mt-0 mb-1"
             >
               {{ attr.customData.title }}
             </p>
@@ -33,7 +42,7 @@
       aria-labelledby="myModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 id="exampleModalLabel" class="modal-title">{{ title }}</h5>
@@ -44,8 +53,48 @@
               aria-label="Close"
             ></button>
           </div>
-          <div class="modal-body">
-            <p>{{ currentEvents }}</p>
+          <div v-if="currentEvents.length" class="modal-body">
+            <div
+              v-for="(event, i) in currentEvents"
+              :key="i"
+              class="bg-light rounded mb-2 p-4"
+            >
+              <div class="d-flex justify-content-between align-items-center">
+                <h4>
+                  {{ event.customData.title }}
+                </h4>
+                <span>
+                  <font-awesome-icon
+                    :icon="['fas', 'pencil-alt']"
+                    class="edit me-2"
+                    data-bs-target="#formModal"
+                    data-bs-toggle="modal"
+                    data-bs-dismiss="modal"
+                    data-bs-update="update"
+                    @click="updateEventModal(event)"
+                  />
+                  <font-awesome-icon
+                    :icon="['fas', 'trash-alt']"
+                    class="trash me-2"
+                    @click="deleteEvent(event)"
+                  />
+                </span>
+              </div>
+              <p v-if="event.customData.description" class="mt-4 mb-0">
+                {{ event.customData.description }}
+              </p>
+              <div
+                v-if="event.customData.video"
+                class="d-flex justify-content-center mt-4"
+              >
+                <iframe
+                  :src="event.customData.video.replace('watch?v=', 'embed/')"
+                  height="200"
+                  width="300"
+                  :title="`${type} video`"
+                ></iframe>
+              </div>
+            </div>
           </div>
           <div class="modal-footer">
             <button
@@ -72,7 +121,10 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 id="exampleModalLabel" class="modal-title">
+            <h5 v-if="update" id="updateModalLabel" class="modal-title">
+              {{ `Update ${type}` }}
+            </h5>
+            <h5 v-else id="addModalLabel" class="modal-title">
               {{ `Add ${type}` }}
             </h5>
             <button
@@ -82,6 +134,7 @@
               data-bs-target="#infoModal"
               data-bs-toggle="modal"
               aria-label="Close"
+              @click="cleanEvent"
             ></button>
           </div>
           <div class="modal-body">
@@ -90,6 +143,7 @@
               <input
                 id="eventName"
                 v-model="eventName"
+                :placeholder="`Specify ${type} here`"
                 type="text"
                 class="form-control"
                 aria-describedby="eventName"
@@ -100,6 +154,7 @@
               <input
                 id="eventVideo"
                 v-model="eventVideo"
+                placeholder="Specify video here"
                 type="text"
                 class="form-control"
                 aria-describedby="eventVideo"
@@ -113,13 +168,25 @@
                 id="eventDescription"
                 v-model="eventDescription"
                 class="form-control"
-                placeholder="Specify excersice here"
+                placeholder="Specify description here"
                 style="height: 100px"
               ></textarea>
             </div>
           </div>
           <div class="modal-footer">
             <button
+              v-if="update"
+              type="button"
+              class="btn btn-info text-white"
+              data-bs-target="#infoModal"
+              data-bs-toggle="modal"
+              data-bs-dismiss="modal"
+              @click="updateEvent"
+            >
+              Save
+            </button>
+            <button
+              v-else
               type="button"
               class="btn btn-info text-white"
               data-bs-target="#infoModal"
@@ -157,6 +224,13 @@ export default {
     eventName: '',
     eventDescription: '',
     eventVideo: '',
+    eventDate: '',
+    oldEventName: '',
+    oldEventDescription: '',
+    oldEventVideo: '',
+    oldEventDate: '',
+    today: new Date(),
+    update: false,
   }),
   computed: {
     title() {
@@ -176,6 +250,17 @@ export default {
     setEventDate(date) {
       this.date = date
     },
+    cleanEvent() {
+      this.eventName = ''
+      this.eventDescription = ''
+      this.eventVideo = ''
+      this.oldEventDate = ''
+      this.oldEventName = ''
+      this.oldEventDescription = ''
+      this.oldEventVideo = ''
+      this.oldEventDate = ''
+      this.update = false
+    },
     addEvent() {
       const collection = this.type === 'training' ? 'trainings' : 'menus'
       this.$fire.firestore.collection(collection).add({
@@ -185,10 +270,65 @@ export default {
         description: this.eventDescription,
         video: this.eventVideo,
       })
-      this.eventName = ''
-      this.eventDescription = ''
-      this.eventVideo = ''
+      this.cleanEvent()
       this.$emit('update')
+    },
+    updateEventModal(event) {
+      this.eventName = event.customData.title
+      this.eventDescription = event.customData.description
+      this.eventVideo = event.customData.video
+      this.oldEventDate = event.customData.date
+      this.oldEventName = event.customData.title
+      this.oldEventDescription = event.customData.description
+      this.oldEventVideo = event.customData.video
+      this.oldEventDate = event.customData.date
+      this.update = true
+    },
+    updateEvent() {
+      const collection = this.type === 'training' ? 'trainings' : 'menus'
+      this.$fire.firestore
+        .collection(collection)
+        .where('userID', '==', this.$fire.auth.currentUser.uid)
+        .where('name', '==', this.oldEventName)
+        .where('description', '==', this.oldEventDescription)
+        .where('video', '==', this.oldEventVideo)
+        .where('date', '==', this.oldEventDate)
+        .get()
+        .then((results) => {
+          results.forEach((doc) => {
+            this.$fire.firestore
+              .collection(collection)
+              .doc(doc.id)
+              .set({
+                userID: this.$fire.auth.currentUser.uid,
+                date: this.oldEventDate,
+                name: this.eventName,
+                description: this.eventDescription,
+                video: this.eventVideo,
+              })
+              .then(this.$emit('update'))
+          })
+        })
+    },
+    deleteEvent(event) {
+      const collection = this.type === 'training' ? 'trainings' : 'menus'
+      this.$fire.firestore
+        .collection(collection)
+        .where('userID', '==', this.$fire.auth.currentUser.uid)
+        .where('name', '==', event.customData.title)
+        .where('description', '==', event.customData.description)
+        .where('video', '==', event.customData.video)
+        .where('date', '==', event.customData.date)
+        .get()
+        .then((results) => {
+          results.forEach((doc) => {
+            this.$fire.firestore
+              .collection(collection)
+              .doc(doc.id)
+              .delete()
+              .then(this.$emit('update'))
+          })
+        })
     },
   },
 }
@@ -278,5 +418,16 @@ export default {
 }
 .btn-info {
   background-color: #17a2b8 !important;
+}
+.text-info {
+  color: #17a2b8 !important;
+}
+.trash,
+.edit {
+  cursor: pointer;
+}
+.day-data {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

@@ -33,6 +33,7 @@ export default {
                 title: doc.data().name,
                 description: doc.data().description,
                 video: doc.data().video,
+                date: doc.data().date,
               },
               dates: new Date(doc.data().date.seconds * 1000),
             })
