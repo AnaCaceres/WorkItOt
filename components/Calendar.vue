@@ -15,7 +15,7 @@
           <span
             class="day-label text-sm text-gray-900"
             :class="{
-              'text-info fw-bold':
+              'text-info fw-bold text-decoration-underline':
                 day.day === today.getDate() &&
                 day.year === today.getFullYear() &&
                 day.month === today.getMonth() + 1,
@@ -27,6 +27,7 @@
               v-for="(attr, i) in attributes"
               :key="i"
               class="day-data bg-secondary text-white text-center fs-6 rounded p-1 mt-0 mb-1"
+              :class="attr.customData.time"
             >
               {{ attr.customData.title }}
             </p>
@@ -58,6 +59,7 @@
               v-for="(event, i) in currentEvents"
               :key="i"
               class="bg-light rounded mb-2 p-4"
+              :class="event.customData.time"
             >
               <div class="d-flex justify-content-between align-items-center">
                 <h4>
@@ -79,6 +81,9 @@
                     @click="deleteEvent(event)"
                   />
                 </span>
+              </div>
+              <div v-if="type === 'menu'" class="mt-4">
+                <h6>Meal time: {{ event.customData.time }}</h6>
               </div>
               <p v-if="event.customData.description" class="mt-4 mb-0">
                 {{ event.customData.description }}
@@ -118,7 +123,7 @@
       aria-labelledby="myModalLabel"
       aria-hidden="true"
     >
-      <div class="modal-dialog">
+      <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
             <h5 v-if="update" id="updateModalLabel" class="modal-title">
@@ -148,6 +153,117 @@
                 class="form-control"
                 aria-describedby="eventName"
               />
+            </div>
+            <div v-if="type === 'menu'" class="mb-3">
+              <h6>Meal time</h6>
+              <div class="form-check form-check-inline">
+                <input
+                  id="breakfast"
+                  v-model="selectedTime"
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  value="breakfast"
+                />
+                <label
+                  class="form-check-label d-flex align-items-center"
+                  for="breakfast"
+                >
+                  <svg
+                    class="bd-placeholder-img rounded me-2"
+                    width="15"
+                    height="15"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    preserveAspectRatio="xMidYMid slice"
+                    focusable="false"
+                  >
+                    <rect width="100%" height="100%" fill="#feb272"></rect>
+                  </svg>
+                  Breakfast
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  id="lunch"
+                  v-model="selectedTime"
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  value="lunch"
+                />
+                <label
+                  class="form-check-label d-flex align-items-center"
+                  for="lunch"
+                >
+                  <svg
+                    class="bd-placeholder-img rounded me-2"
+                    width="15"
+                    height="15"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    preserveAspectRatio="xMidYMid slice"
+                    focusable="false"
+                  >
+                    <rect width="100%" height="100%" fill="#75b798"></rect>
+                  </svg>
+                  Lunch
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  id="snack"
+                  v-model="selectedTime"
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  value="snack"
+                />
+                <label
+                  class="form-check-label d-flex align-items-center"
+                  for="snack"
+                >
+                  <svg
+                    class="bd-placeholder-img rounded me-2"
+                    width="15"
+                    height="15"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    preserveAspectRatio="xMidYMid slice"
+                    focusable="false"
+                  >
+                    <rect width="100%" height="100%" fill="#e685b5"></rect>
+                  </svg>
+                  Snack
+                </label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  id="diner"
+                  v-model="selectedTime"
+                  class="form-check-input"
+                  type="radio"
+                  name="inlineRadioOptions"
+                  value="diner"
+                />
+                <label
+                  class="form-check-label d-flex align-items-center"
+                  for="diner"
+                >
+                  <svg
+                    class="bd-placeholder-img rounded me-2"
+                    width="15"
+                    height="15"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                    preserveAspectRatio="xMidYMid slice"
+                    focusable="false"
+                  >
+                    <rect width="100%" height="100%" fill="#6ea8fe"></rect>
+                  </svg>
+                  Diner
+                </label>
+              </div>
             </div>
             <div class="mb-3">
               <label for="eventVideo" class="form-label">Video URL</label>
@@ -225,10 +341,12 @@ export default {
     eventDescription: '',
     eventVideo: '',
     eventDate: '',
+    selectedTime: '',
     oldEventName: '',
     oldEventDescription: '',
     oldEventVideo: '',
     oldEventDate: '',
+    oldSelectedTime: '',
     today: new Date(),
     update: false,
   }),
@@ -254,22 +372,34 @@ export default {
       this.eventName = ''
       this.eventDescription = ''
       this.eventVideo = ''
+      this.selectedTime = ''
       this.oldEventDate = ''
       this.oldEventName = ''
       this.oldEventDescription = ''
       this.oldEventVideo = ''
       this.oldEventDate = ''
+      this.oldSelectedTime = ''
       this.update = false
     },
     addEvent() {
-      const collection = this.type === 'training' ? 'trainings' : 'menus'
-      this.$fire.firestore.collection(collection).add({
-        userID: this.$fire.auth.currentUser.uid,
-        date: this.date,
-        name: this.eventName,
-        description: this.eventDescription,
-        video: this.eventVideo,
-      })
+      if (this.type === 'training') {
+        this.$fire.firestore.collection('trainings').add({
+          userID: this.$fire.auth.currentUser.uid,
+          date: this.date,
+          name: this.eventName,
+          description: this.eventDescription,
+          video: this.eventVideo,
+        })
+      } else {
+        this.$fire.firestore.collection('menus').add({
+          userID: this.$fire.auth.currentUser.uid,
+          date: this.date,
+          name: this.eventName,
+          time: this.selectedTime,
+          description: this.eventDescription,
+          video: this.eventVideo,
+        })
+      }
       this.cleanEvent()
       this.$emit('update')
     },
@@ -277,58 +407,119 @@ export default {
       this.eventName = event.customData.title
       this.eventDescription = event.customData.description
       this.eventVideo = event.customData.video
+      this.selectedTime = event.customData.time
       this.oldEventDate = event.customData.date
       this.oldEventName = event.customData.title
       this.oldEventDescription = event.customData.description
       this.oldEventVideo = event.customData.video
       this.oldEventDate = event.customData.date
+      this.oldSelectedTime = event.customData.time
       this.update = true
     },
     updateEvent() {
-      const collection = this.type === 'training' ? 'trainings' : 'menus'
-      this.$fire.firestore
-        .collection(collection)
-        .where('userID', '==', this.$fire.auth.currentUser.uid)
-        .where('name', '==', this.oldEventName)
-        .where('description', '==', this.oldEventDescription)
-        .where('video', '==', this.oldEventVideo)
-        .where('date', '==', this.oldEventDate)
-        .get()
-        .then((results) => {
-          results.forEach((doc) => {
-            this.$fire.firestore
-              .collection(collection)
-              .doc(doc.id)
-              .set({
-                userID: this.$fire.auth.currentUser.uid,
-                date: this.oldEventDate,
-                name: this.eventName,
-                description: this.eventDescription,
-                video: this.eventVideo,
-              })
-              .then(this.$emit('update'))
+      if (this.type === 'training') {
+        this.$fire.firestore
+          .collection('trainings')
+          .where('userID', '==', this.$fire.auth.currentUser.uid)
+          .where('name', '==', this.oldEventName)
+          .where('description', '==', this.oldEventDescription)
+          .where('video', '==', this.oldEventVideo)
+          .where('date', '==', this.oldEventDate)
+          .get()
+          .then((results) => {
+            results.forEach((doc) => {
+              this.$fire.firestore
+                .collection('trainings')
+                .doc(doc.id)
+                .set({
+                  userID: this.$fire.auth.currentUser.uid,
+                  date: this.oldEventDate,
+                  name: this.eventName,
+                  description: this.eventDescription,
+                  video: this.eventVideo,
+                })
+                .then(() => {
+                  this.cleanEvent()
+                  this.$emit('update')
+                })
+            })
           })
-        })
+      } else {
+        this.$fire.firestore
+          .collection('menus')
+          .where('userID', '==', this.$fire.auth.currentUser.uid)
+          .where('name', '==', this.oldEventName)
+          .where('time', '==', this.oldSelectedTime)
+          .where('description', '==', this.oldEventDescription)
+          .where('video', '==', this.oldEventVideo)
+          .where('date', '==', this.oldEventDate)
+          .get()
+          .then((results) => {
+            results.forEach((doc) => {
+              this.$fire.firestore
+                .collection('menus')
+                .doc(doc.id)
+                .set({
+                  userID: this.$fire.auth.currentUser.uid,
+                  date: this.oldEventDate,
+                  name: this.eventName,
+                  time: this.selectedTime,
+                  description: this.eventDescription,
+                  video: this.eventVideo,
+                })
+                .then(() => {
+                  this.cleanEvent()
+                  this.$emit('update')
+                })
+            })
+          })
+      }
     },
     deleteEvent(event) {
-      const collection = this.type === 'training' ? 'trainings' : 'menus'
-      this.$fire.firestore
-        .collection(collection)
-        .where('userID', '==', this.$fire.auth.currentUser.uid)
-        .where('name', '==', event.customData.title)
-        .where('description', '==', event.customData.description)
-        .where('video', '==', event.customData.video)
-        .where('date', '==', event.customData.date)
-        .get()
-        .then((results) => {
-          results.forEach((doc) => {
-            this.$fire.firestore
-              .collection(collection)
-              .doc(doc.id)
-              .delete()
-              .then(this.$emit('update'))
+      if (this.type === 'training') {
+        this.$fire.firestore
+          .collection('trainings')
+          .where('userID', '==', this.$fire.auth.currentUser.uid)
+          .where('name', '==', event.customData.title)
+          .where('description', '==', event.customData.description)
+          .where('video', '==', event.customData.video)
+          .where('date', '==', event.customData.date)
+          .get()
+          .then((results) => {
+            results.forEach((doc) => {
+              this.$fire.firestore
+                .collection('trainings')
+                .doc(doc.id)
+                .delete()
+                .then(() => {
+                  this.cleanEvent()
+                  this.$emit('update')
+                })
+            })
           })
-        })
+      } else {
+        this.$fire.firestore
+          .collection('menus')
+          .where('userID', '==', this.$fire.auth.currentUser.uid)
+          .where('name', '==', event.customData.title)
+          .where('time', '==', event.customData.time)
+          .where('description', '==', event.customData.description)
+          .where('video', '==', event.customData.video)
+          .where('date', '==', event.customData.date)
+          .get()
+          .then((results) => {
+            results.forEach((doc) => {
+              this.$fire.firestore
+                .collection('menus')
+                .doc(doc.id)
+                .delete()
+                .then(() => {
+                  this.cleanEvent()
+                  this.$emit('update')
+                })
+            })
+          })
+      }
     },
   },
 }
@@ -429,5 +620,21 @@ export default {
 .day-data {
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.breakfast {
+  color: black !important;
+  background-color: #fecba1 !important;
+}
+.lunch {
+  color: black !important;
+  background-color: #a3cfbb !important;
+}
+.snack {
+  color: black !important;
+  background-color: #efadce !important;
+}
+.diner {
+  color: black !important;
+  background-color: #9ec5fe !important;
 }
 </style>

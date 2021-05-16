@@ -70,6 +70,10 @@ export default {
         'faUserNinja',
         'faTrashAlt',
         'faPencilAlt',
+        'faCheck',
+        'faTimes',
+        'faSlash',
+        'faPlus',
       ],
     },
   },
@@ -93,6 +97,7 @@ export default {
       firestore: {
         enablePersistence: true,
       },
+      storage: true,
     },
   },
 

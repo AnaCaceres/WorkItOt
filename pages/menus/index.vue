@@ -32,6 +32,7 @@ export default {
             this.attributes.push({
               customData: {
                 title: doc.data().name,
+                time: doc.data().time,
                 description: doc.data().description,
                 video: doc.data().video,
                 date: doc.data().date,

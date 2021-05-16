@@ -7,8 +7,10 @@
           class="nav-link"
           :class="isSelected('trainings') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'dumbbell']" class="me-2" />
-          Trainings
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon :icon="['fas', 'dumbbell']" class="me-2" />
+            Trainings
+          </div>
         </NuxtLink>
       </li>
       <li @click="active = 'menus'">
@@ -17,8 +19,10 @@
           class="nav-link"
           :class="isSelected('menus') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'utensils']" class="me-2" />
-          Menus
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon :icon="['fas', 'utensils']" class="me-2" />
+            Menus
+          </div>
         </NuxtLink>
       </li>
       <li @click="active = 'habits'">
@@ -27,8 +31,10 @@
           class="nav-link"
           :class="isSelected('habits') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'tasks']" class="me-2" />
-          Habits
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon :icon="['fas', 'tasks']" class="me-2" />
+            Habits
+          </div>
         </NuxtLink>
       </li>
       <li @click="active = 'measurements'">
@@ -37,8 +43,10 @@
           class="nav-link"
           :class="isSelected('measurements') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'weight']" class="me-2" />
-          Measurements
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon :icon="['fas', 'weight']" class="me-2" />
+            Measurements
+          </div>
         </NuxtLink>
       </li>
       <li @click="active = 'groceries'">
@@ -47,8 +55,13 @@
           class="nav-link"
           :class="isSelected('groceries') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'shopping-basket']" class="me-2" />
-          Groceries
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon
+              :icon="['fas', 'shopping-basket']"
+              class="me-2"
+            />
+            Groceries
+          </div>
         </NuxtLink>
       </li>
       <li class="mt-auto" @click="active = 'about'">
@@ -57,8 +70,10 @@
           class="nav-link"
           :class="isSelected('about') ? 'active' : 'link-dark'"
         >
-          <font-awesome-icon :icon="['fas', 'building']" class="me-2" />
-          About us
+          <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+            <font-awesome-icon :icon="['fas', 'building']" class="me-2" />
+            About us
+          </div>
         </NuxtLink>
       </li>
     </ul>
@@ -94,7 +109,13 @@
         class="dropdown-menu text-small shadow"
         aria-labelledby="dropdownUser2"
       >
-        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li @click="active = 'profile'">
+          <NuxtLink to="profile" class="dropdown-item">
+            <div data-bs-toggle="collapse" data-bs-target="#navbarToggler">
+              Profile
+            </div>
+          </NuxtLink>
+        </li>
         <li><hr class="dropdown-divider" /></li>
         <li><a class="dropdown-item" href="#" @click="logout">Sign out</a></li>
       </ul>
