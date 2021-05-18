@@ -38,6 +38,7 @@
                 class="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                @click="cleanUpdate"
               ></button>
             </div>
             <div class="modal-body">
@@ -173,6 +174,7 @@
                 class="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
+                @click="cleanUpdate"
               ></button>
             </div>
             <div class="modal-body">
@@ -342,8 +344,13 @@ export default {
       }
       this.habits.unshift(newHabit)
       this.$fire.firestore.collection('habits').add(newHabit)
-      this.checkedWeekDays = ''
+      this.cleanUpdate()
+    },
+    cleanUpdate() {
       this.habitName = ''
+      this.checkedWeekDays = []
+      this.updateHabitId = ''
+      this.updated = false
     },
     updateHabitModal(habit) {
       this.habitName = habit.name
@@ -363,15 +370,12 @@ export default {
         .doc(this.updateHabitId.docID)
         .set(updatedHabit)
         .then(() => {
-          this.checkedWeekDays = ''
-          this.habitName = ''
-          this.updated = false
           this.habits.splice(this.habits.indexOf(this.updateHabitId), 1)
           this.habits.unshift({
             ...updatedHabit,
             docID: this.updateHabitId.docID,
           })
-          this.updateHabitId = ''
+          this.cleanUpdate()
         })
     },
     deleteHabit(habit) {
@@ -380,11 +384,8 @@ export default {
         .doc(habit.docID)
         .delete()
         .then(() => {
-          this.checkedWeekDays = ''
-          this.habitName = ''
-          this.updated = false
           this.habits.splice(this.habits.indexOf(habit), 1)
-          this.updateHabitId = ''
+          this.cleanUpdate()
         })
     },
     getIcon(habit, day) {

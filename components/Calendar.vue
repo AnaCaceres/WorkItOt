@@ -382,24 +382,22 @@ export default {
       this.update = false
     },
     addEvent() {
-      if (this.type === 'training') {
-        this.$fire.firestore.collection('trainings').add({
-          userID: this.$fire.auth.currentUser.uid,
-          date: this.date,
-          name: this.eventName,
-          description: this.eventDescription,
-          video: this.eventVideo,
-        })
-      } else {
-        this.$fire.firestore.collection('menus').add({
-          userID: this.$fire.auth.currentUser.uid,
-          date: this.date,
-          name: this.eventName,
-          time: this.selectedTime,
-          description: this.eventDescription,
-          video: this.eventVideo,
-        })
+      let newEvent = {
+        userID: this.$fire.auth.currentUser.uid,
+        date: this.date,
+        name: this.eventName,
+        description: this.eventDescription,
+        video: this.eventVideo,
       }
+      let collection = 'trainings'
+      if (this.type !== 'training') {
+        collection = 'menus'
+        newEvent = {
+          ...newEvent,
+          time: this.selectedTime,
+        }
+      }
+      this.$fire.firestore.collection(collection).add(newEvent)
       this.cleanEvent()
       this.$emit('update')
     },
