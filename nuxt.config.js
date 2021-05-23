@@ -51,7 +51,19 @@ export default {
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
     '@nuxtjs/firebase',
+    'nuxt-mq'   
   ],
+  
+  'mq':  {
+    defaultBreakpoint: 'sm',
+    breakpoints: {
+      sm: 576,
+      md: 768,
+      lg: 992,
+      xl: 1200,
+      xxl: Infinity
+    }
+  },
 
   fontawesome: {
     icons: {

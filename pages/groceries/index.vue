@@ -139,22 +139,14 @@ export default {
         ? (isBought = false)
         : (isBought = true)
       this.list[this.list.indexOf(item)].bought = isBought
+      const updatedItem = {
+        ...item,
+        bought: isBought,
+      }
       this.$fire.firestore
         .collection('groceries')
-        .where('userID', '==', item.userID)
-        .where('item', '==', item.item)
-        .where('quantity', '==', item.quantity)
-        .get()
-        .then((results) => {
-          results.forEach((doc) => {
-            this.$fire.firestore.collection('groceries').doc(doc.id).set(
-              {
-                bought: !doc.data().bought,
-              },
-              { merge: true }
-            )
-          })
-        })
+        .doc(item.docId)
+        .set(updatedItem)
     },
     update() {
       this.list = []
@@ -164,7 +156,10 @@ export default {
         .get()
         .then((results) => {
           results.forEach((doc) => {
-            this.list.unshift(doc.data())
+            this.list.unshift({
+              docId: doc.id,
+              ...doc.data(),
+            })
           })
         })
     },

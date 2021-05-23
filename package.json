@@ -21,6 +21,7 @@
     "js-cookie": "^2.2.1",
     "jwt-decode": "^3.1.2",
     "nuxt": "^2.15.4",
+    "nuxt-mq": "^2.0.2",
     "uninstall": "0.0.0",
     "v-calendar": "^2.3.0"
   },

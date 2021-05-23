@@ -1,6 +1,6 @@
 <template>
   <div class="login-layout d-flex flex-column">
-    <Header />
+    <Header landing />
     <Nuxt />
   </div>
 </template>

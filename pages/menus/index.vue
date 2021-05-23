@@ -30,6 +30,7 @@ export default {
         .then((results) => {
           results.forEach((doc) => {
             this.attributes.push({
+              docId: doc.id,
               customData: {
                 title: doc.data().name,
                 time: doc.data().time,

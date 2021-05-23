@@ -1,6 +1,56 @@
 <template>
   <div class="habits p-4">
     <h2>Habit Tracker</h2>
+    <div class="my-3">
+      <h4>Today's habits</h4>
+      <ul class="list-group">
+        <li
+          v-for="habit in todaysHabits"
+          :key="habit.docID"
+          class="list-group-item"
+        >
+          <input
+            :id="habit.docID"
+            v-model="accomplishedToday"
+            class="form-check-input"
+            type="checkbox"
+            :value="habit.docID"
+          />
+          <label class="form-check-label" for="monday">
+            {{ habit.name }}
+          </label>
+        </li>
+      </ul>
+    </div>
+    <div class="mb-3 table-responsive">
+      <h4>This month</h4>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="col">Habit</th>
+            <th v-for="day in thisMonthDays" :key="day" scope="col">
+              {{ day }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(habit, i) in habits" :key="i">
+            <th scope="row">{{ habit.name }}</th>
+            <td
+              v-for="day in thisMonthDays"
+              :key="day"
+              :class="{ 'bg-light': !getIcon(habit, day) }"
+            >
+              <font-awesome-icon
+                v-if="getIcon(habit, day)"
+                :icon="['fas', getIcon(habit, day)]"
+                :class="getIcon(habit, day)"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="d-flex justify-content-end">
       <button
         class="btn btn-info text-white mx-2"
@@ -213,56 +263,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="my-3">
-      <h4>Today's habits</h4>
-      <ul class="list-group">
-        <li
-          v-for="habit in todaysHabits"
-          :key="habit.docID"
-          class="list-group-item"
-        >
-          <input
-            :id="habit.docID"
-            v-model="accomplishedToday"
-            class="form-check-input"
-            type="checkbox"
-            :value="habit.docID"
-          />
-          <label class="form-check-label" for="monday">
-            {{ habit.name }}
-          </label>
-        </li>
-      </ul>
-    </div>
-    <div class="mb-3 table-responsive">
-      <h4>This month</h4>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th scope="col">Habit</th>
-            <th v-for="day in thisMonthDays" :key="day" scope="col">
-              {{ day }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(habit, i) in habits" :key="i">
-            <th scope="row">{{ habit.name }}</th>
-            <td
-              v-for="day in thisMonthDays"
-              :key="day"
-              :class="{ 'bg-light': !getIcon(habit, day) }"
-            >
-              <font-awesome-icon
-                v-if="getIcon(habit, day)"
-                :icon="['fas', getIcon(habit, day)]"
-                :class="getIcon(habit, day)"
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   </div>
 </template>

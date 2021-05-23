@@ -342,11 +342,7 @@ export default {
     eventVideo: '',
     eventDate: '',
     selectedTime: '',
-    oldEventName: '',
-    oldEventDescription: '',
-    oldEventVideo: '',
-    oldEventDate: '',
-    oldSelectedTime: '',
+    oldEvent: '',
     today: new Date(),
     update: false,
   }),
@@ -373,13 +369,7 @@ export default {
       this.eventDescription = ''
       this.eventVideo = ''
       this.selectedTime = ''
-      this.oldEventDate = ''
-      this.oldEventName = ''
-      this.oldEventDescription = ''
-      this.oldEventVideo = ''
-      this.oldEventDate = ''
-      this.oldSelectedTime = ''
-      this.update = false
+      this.oldEvent = ''
     },
     addEvent() {
       let newEvent = {
@@ -406,118 +396,47 @@ export default {
       this.eventDescription = event.customData.description
       this.eventVideo = event.customData.video
       this.selectedTime = event.customData.time
-      this.oldEventDate = event.customData.date
-      this.oldEventName = event.customData.title
-      this.oldEventDescription = event.customData.description
-      this.oldEventVideo = event.customData.video
-      this.oldEventDate = event.customData.date
-      this.oldSelectedTime = event.customData.time
+      this.oldEvent = event
       this.update = true
     },
     updateEvent() {
-      if (this.type === 'training') {
-        this.$fire.firestore
-          .collection('trainings')
-          .where('userID', '==', this.$fire.auth.currentUser.uid)
-          .where('name', '==', this.oldEventName)
-          .where('description', '==', this.oldEventDescription)
-          .where('video', '==', this.oldEventVideo)
-          .where('date', '==', this.oldEventDate)
-          .get()
-          .then((results) => {
-            results.forEach((doc) => {
-              this.$fire.firestore
-                .collection('trainings')
-                .doc(doc.id)
-                .set({
-                  userID: this.$fire.auth.currentUser.uid,
-                  date: this.oldEventDate,
-                  name: this.eventName,
-                  description: this.eventDescription,
-                  video: this.eventVideo,
-                })
-                .then(() => {
-                  this.cleanEvent()
-                  this.$emit('update')
-                })
-            })
-          })
-      } else {
-        this.$fire.firestore
-          .collection('menus')
-          .where('userID', '==', this.$fire.auth.currentUser.uid)
-          .where('name', '==', this.oldEventName)
-          .where('time', '==', this.oldSelectedTime)
-          .where('description', '==', this.oldEventDescription)
-          .where('video', '==', this.oldEventVideo)
-          .where('date', '==', this.oldEventDate)
-          .get()
-          .then((results) => {
-            results.forEach((doc) => {
-              this.$fire.firestore
-                .collection('menus')
-                .doc(doc.id)
-                .set({
-                  userID: this.$fire.auth.currentUser.uid,
-                  date: this.oldEventDate,
-                  name: this.eventName,
-                  time: this.selectedTime,
-                  description: this.eventDescription,
-                  video: this.eventVideo,
-                })
-                .then(() => {
-                  this.cleanEvent()
-                  this.$emit('update')
-                })
-            })
-          })
+      let collection = null
+      let updatedEvent = {
+        userID: this.$fire.auth.currentUser.uid,
+        date: this.oldEvent.customData.date,
+        name: this.eventName,
+        description: this.eventDescription,
+        video: this.eventVideo,
       }
+      if (this.type === 'training') {
+        collection = 'trainings'
+      } else {
+        collection = 'menus'
+        updatedEvent = {
+          ...updatedEvent,
+          time: this.selectedTime,
+        }
+      }
+      this.$fire.firestore
+        .collection(collection)
+        .doc(this.oldEvent.docId)
+        .set(updatedEvent)
+        .then(() => {
+          this.cleanEvent()
+          this.$emit('update')
+        })
     },
     deleteEvent(event) {
-      if (this.type === 'training') {
-        this.$fire.firestore
-          .collection('trainings')
-          .where('userID', '==', this.$fire.auth.currentUser.uid)
-          .where('name', '==', event.customData.title)
-          .where('description', '==', event.customData.description)
-          .where('video', '==', event.customData.video)
-          .where('date', '==', event.customData.date)
-          .get()
-          .then((results) => {
-            results.forEach((doc) => {
-              this.$fire.firestore
-                .collection('trainings')
-                .doc(doc.id)
-                .delete()
-                .then(() => {
-                  this.cleanEvent()
-                  this.$emit('update')
-                })
-            })
-          })
-      } else {
-        this.$fire.firestore
-          .collection('menus')
-          .where('userID', '==', this.$fire.auth.currentUser.uid)
-          .where('name', '==', event.customData.title)
-          .where('time', '==', event.customData.time)
-          .where('description', '==', event.customData.description)
-          .where('video', '==', event.customData.video)
-          .where('date', '==', event.customData.date)
-          .get()
-          .then((results) => {
-            results.forEach((doc) => {
-              this.$fire.firestore
-                .collection('menus')
-                .doc(doc.id)
-                .delete()
-                .then(() => {
-                  this.cleanEvent()
-                  this.$emit('update')
-                })
-            })
-          })
-      }
+      console.log(event)
+      const collection = this.type === 'training' ? 'trainings' : 'menus'
+      this.$fire.firestore
+        .collection(collection)
+        .doc(event.docId)
+        .delete()
+        .then(() => {
+          this.cleanEvent()
+          this.$emit('update')
+        })
     },
   },
 }

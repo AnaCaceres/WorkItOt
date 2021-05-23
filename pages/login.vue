@@ -7,6 +7,9 @@
 <script>
 export default {
   layout: 'login',
+  created() {
+    if (this.$fire.auth.currentUser) this.$router.push('/trainings')
+  },
 }
 </script>
 

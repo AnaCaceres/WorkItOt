@@ -87,23 +87,19 @@
         aria-expanded="false"
       >
         <font-awesome-icon
-          v-if="!this.$fire.auth.currentUser.photoURL"
+          v-if="!userImage"
           :icon="['fas', 'user-ninja']"
           class="me-2"
         />
         <img
           v-else
-          :src="this.$fire.auth.currentUser.photoURL"
+          :src="userImage"
           alt="mdo"
           width="32"
           height="32"
           class="rounded-circle me-2"
         />
-        <strong>{{
-          this.$fire.auth.currentUser.displayName
-            ? this.$fire.auth.currentUser.displayName
-            : 'User'
-        }}</strong>
+        <strong>{{ userName ? userName : 'User' }}</strong>
       </a>
       <ul
         class="dropdown-menu text-small shadow"
@@ -117,7 +113,17 @@
           </NuxtLink>
         </li>
         <li><hr class="dropdown-divider" /></li>
-        <li><a class="dropdown-item" href="#" @click="logout">Sign out</a></li>
+        <li>
+          <a
+            class="dropdown-item"
+            href="#"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarToggler"
+            @click="logout"
+          >
+            Sign out</a
+          >
+        </li>
       </ul>
     </div>
   </div>
@@ -128,6 +134,14 @@ export default {
   data: () => ({
     active: 'trainings',
   }),
+  computed: {
+    userImage() {
+      return this.$store.state.userImg || this.$fire.auth.currentUser.photoURL
+    },
+    userName() {
+      return this.$store.state.name || this.$fire.auth.currentUser.displayName
+    },
+  },
   created() {
     this.active = this.$route.path.substring(1)
   },

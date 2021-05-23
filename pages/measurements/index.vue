@@ -246,23 +246,8 @@ export default {
       this.measurements.splice(index, 1)
       this.$fire.firestore
         .collection('measurements')
-        .where('userID', '==', measurement.userID)
-        .where('date', '==', measurement.date)
-        .where('weight', '==', measurement.weight)
-        .where('rightArm', '==', measurement.rightArm)
-        .where('leftArm', '==', measurement.leftArm)
-        .where('rightThigh', '==', measurement.rightThigh)
-        .where('leftThigh', '==', measurement.leftThigh)
-        .where('rightCalf', '==', measurement.rightCalf)
-        .where('leftCalf', '==', measurement.leftCalf)
-        .where('waist', '==', measurement.waist)
-        .where('hips', '==', measurement.hips)
-        .get()
-        .then((results) => {
-          results.forEach((doc) => {
-            this.$fire.firestore.collection('measurements').doc(doc.id).delete()
-          })
-        })
+        .doc(measurement.docId)
+        .delete()
     },
     update() {
       this.measurements = []
@@ -273,6 +258,7 @@ export default {
         .then((results) => {
           results.forEach((doc) => {
             this.measurements.push({
+              docId: doc.id,
               ...doc.data(),
               transformedDate: new Date(doc.data().date.seconds * 1000),
             })
