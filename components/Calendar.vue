@@ -427,7 +427,6 @@ export default {
         })
     },
     deleteEvent(event) {
-      console.log(event)
       const collection = this.type === 'training' ? 'trainings' : 'menus'
       this.$fire.firestore
         .collection(collection)
