@@ -73,7 +73,7 @@
         class="modal modal-fullscreen-sm-down fade"
         tabindex="-1"
         role="dialog"
-        aria-labelledby="myModalLabel"
+        aria-label="updateHabitModal"
         aria-hidden="true"
       >
         <div class="modal-dialog modal-dialog-scrollable">
@@ -99,7 +99,6 @@
                   v-model="habitName"
                   type="text"
                   class="form-control"
-                  aria-describedby="habitName"
                 />
               </div>
               <div class="mb-3">
@@ -212,7 +211,7 @@
         class="modal modal-fullscreen-sm-down fade"
         tabindex="-1"
         role="dialog"
-        aria-labelledby="editModal"
+        aria-label="editHabitsModal"
         aria-hidden="true"
       >
         <div class="modal-dialog modal-dialog-scrollable">

@@ -10,7 +10,6 @@
           class="form-control"
           placeholder="Weight"
           aria-label="weight"
-          aria-describedby="weight"
         />
         <span id="weight" class="input-group-text">kg</span>
       </div>
@@ -25,7 +24,6 @@
               class="form-control"
               placeholder="Left Arm"
               aria-label="leftArm"
-              aria-describedby="leftArm"
             />
             <span id="leftArm" class="input-group-text">cm</span>
           </div>
@@ -38,7 +36,6 @@
               class="form-control"
               placeholder="Rigth Arm"
               aria-label="rightArm"
-              aria-describedby="rightArm"
             />
             <span id="rightArm" class="input-group-text">cm</span>
           </div>
@@ -54,7 +51,6 @@
               class="form-control"
               placeholder="Left Thigh"
               aria-label="leftThigh"
-              aria-describedby="leftThigh"
             />
             <span id="leftThigh" class="input-group-text">cm</span>
           </div>
@@ -67,7 +63,6 @@
               class="form-control"
               placeholder="Rigth Thigh"
               aria-label="rightThigh"
-              aria-describedby="rightThigh"
             />
             <span id="rightThigh" class="input-group-text">cm</span>
           </div>
@@ -83,7 +78,6 @@
               class="form-control"
               placeholder="Left Calf"
               aria-label="leftCalf"
-              aria-describedby="leftCalf"
             />
             <span id="leftCalf" class="input-group-text">cm</span>
           </div>
@@ -96,7 +90,6 @@
               class="form-control"
               placeholder="Rigth Calf"
               aria-label="rightCalf"
-              aria-describedby="rightCalf"
             />
             <span id="rightCalf" class="input-group-text">cm</span>
           </div>
@@ -112,7 +105,6 @@
               class="form-control"
               placeholder="Waist"
               aria-label="waist"
-              aria-describedby="waist"
             />
             <span id="waist" class="input-group-text">cm</span>
           </div>
@@ -125,7 +117,6 @@
               class="form-control"
               placeholder="Hips"
               aria-label="hips"
-              aria-describedby="hips"
             />
             <span id="hips" class="input-group-text">cm</span>
           </div>
@@ -162,7 +153,7 @@
               <th scope="col">Left Calf</th>
               <th scope="col">Waist</th>
               <th scope="col">Hips</th>
-              <th scope="col"></th>
+              <td scope="col"></td>
             </tr>
           </thead>
           <tbody>

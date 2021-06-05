@@ -103,7 +103,7 @@
       </a>
       <ul
         class="dropdown-menu text-small shadow"
-        aria-labelledby="dropdownUser2"
+        aria-label="dropdownUserProfile"
       >
         <li @click="active = 'profile'">
           <NuxtLink to="profile" class="dropdown-item">
@@ -161,6 +161,6 @@ export default {
 
 <style lang="scss" scoped>
 .active {
-  background-color: #17a2b8 !important;
+  background-color: #006e80 !important;
 }
 </style>

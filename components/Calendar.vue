@@ -15,7 +15,7 @@
           <span
             class="day-label text-sm text-gray-900"
             :class="{
-              'text-info fw-bold text-decoration-underline':
+              'text-info fw-bold':
                 day.day === today.getDate() &&
                 day.year === today.getFullYear() &&
                 day.month === today.getMonth() + 1,
@@ -40,7 +40,7 @@
       class="modal modal-fullscreen-sm-down fade"
       tabindex="-1"
       role="dialog"
-      aria-labelledby="myModalLabel"
+      aria-label="eventsModal"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-scrollable">
@@ -120,7 +120,7 @@
       class="modal modal-fullscreen-sm-down fade"
       tabindex="-1"
       role="dialog"
-      aria-labelledby="myModalLabel"
+      aria-label="updateEventModal"
       aria-hidden="true"
     >
       <div class="modal-dialog modal-dialog-scrollable">
@@ -151,7 +151,7 @@
                 :placeholder="`Specify ${type} here`"
                 type="text"
                 class="form-control"
-                aria-describedby="eventName"
+                aria-label="eventName"
               />
             </div>
             <div v-if="type === 'menu'" class="mb-3">
@@ -273,7 +273,6 @@
                 placeholder="Specify video here"
                 type="text"
                 class="form-control"
-                aria-describedby="eventVideo"
               />
             </div>
             <div class="mb-3">
@@ -497,6 +496,7 @@ export default {
     background-color: var(--weekday-bg);
     border-bottom: var(--weekday-border);
     border-top: var(--weekday-border);
+    color: black;
     padding: 5px 0;
   }
   & .vc-day {
@@ -524,10 +524,10 @@ export default {
   }
 }
 .btn-info {
-  background-color: #17a2b8 !important;
+  background-color: #006e80 !important;
 }
 .text-info {
-  color: #17a2b8 !important;
+  color: #006e80 !important;
 }
 .trash,
 .edit {

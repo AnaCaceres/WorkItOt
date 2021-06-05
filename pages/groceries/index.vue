@@ -10,7 +10,6 @@
           class="form-control"
           placeholder="New item"
           aria-label="NewItem"
-          aria-describedby="button-addon"
         />
         <input
           id="newItemQuantityDesktop"
@@ -19,7 +18,6 @@
           class="form-control"
           placeholder="Quantity"
           aria-label="newItemQuantity"
-          aria-describedby="button-addon"
         />
         <button
           id="button-addon"
@@ -38,7 +36,6 @@
           class="form-control mb-2"
           placeholder="New item"
           aria-label="NewItem"
-          aria-describedby="button-addon"
         />
         <input
           id="newItemQuantity"
@@ -47,7 +44,6 @@
           class="form-control mb-2"
           placeholder="Quantity"
           aria-label="newItemQuantity"
-          aria-describedby="button-addon"
         />
         <button
           id="button-addon"
@@ -185,13 +181,13 @@ export default {
         display: flex;
       }
       .btn-info {
-        background-color: #17a2b8 !important;
+        background-color: #006e80 !important;
       }
       .btn-outline-info {
-        border-color: #17a2b8 !important;
-        color: #17a2b8 !important;
+        border-color: #006e80 !important;
+        color: #006e80 !important;
         &:hover {
-          background-color: #17a2b8 !important;
+          background-color: #006e80 !important;
           color: white !important;
         }
       }
